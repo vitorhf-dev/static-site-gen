@@ -5,38 +5,31 @@ from textnode import TextNode, TextType
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
-        node = TextNode("This is a text node", TextType.BOLD)
-        node2 = TextNode("This is a text node", TextType.BOLD)
+        node = TextNode("This is a text node", TextType.TEXT)
+        node2 = TextNode("This is a text node", TextType.TEXT)
         self.assertEqual(node, node2)
-    
+
+    def test_eq_false(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        node2 = TextNode("This is a text node", TextType.BOLD)
+        self.assertNotEqual(node, node2)
+
+    def test_eq_false2(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        node2 = TextNode("This is a text node2", TextType.TEXT)
+        self.assertNotEqual(node, node2)
+
+    def test_eq_url(self):
+        node = TextNode("This is a text node", TextType.ITALIC, "https://www.boot.dev")
+        node2 = TextNode("This is a text node", TextType.ITALIC, "https://www.boot.dev")
+        self.assertEqual(node, node2)
+
+    def test_repr(self):
+        node = TextNode("This is a text node", TextType.TEXT, "https://www.boot.dev")
+        self.assertEqual(
+            "TextNode(This is a text node, text, https://www.boot.dev)", repr(node)
+        )
 
 
 if __name__ == "__main__":
     unittest.main()
-
-def test_equal_with_none_url(self):
-    n1 = TextNode("hi", TextType.BOLD)
-    n2 = TextNode("hi", TextType.BOLD, None)
-    self.assertEqual(n1, n2)
-
-def test_not_equal_different_text(self):
-    n1 = TextNode("a", TextType.BOLD)
-    n2 = TextNode("b", TextType.BOLD)
-    self.assertNotEqual(n1, n2)
-
-def test_not_equal_different_type(self):
-    n1 = TextNode("same", TextType.BOLD)
-    n2 = TextNode("same", TextType.ITALIC)
-    self.assertNotEqual(n1, n2)
-
-def test_not_equal_url_mismatch(self):
-    n1 = TextNode("t", TextType.LINK, "http://a")
-    n2 = TextNode("t", TextType.LINK, None)
-    self.assertNotEqual(n1, n2)
-
-def test_equal_all_match_with_url(self):
-    n1 = TextNode("t", TextType.LINK, "http://a")
-    n2 = TextNode("t", TextType.LINK, "http://a")
-    self.assertEqual(n1, n2)
-
-

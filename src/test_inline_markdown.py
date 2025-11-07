@@ -222,6 +222,38 @@ class TestInlineMarkdown(unittest.TestCase):
         out_images = split_nodes_image([img_node])
         assert out_links == [img_node]
         assert out_images == [img_node]
+    
+    def test_text_to_textnodes_plain(self):
+        text = "This is just plain text"
+        result = text_to_textnodes(text)
+        expected = [TextNode("This is just plain text", TextType.TEXT)]
+        assert result == expected
+    
+    def test_text_to_textnodes_bold_only(self):
+        text = "This is **bold** text"
+        result = text_to_textnodes(text)
+        expected = [
+            TextNode("This is ", TextType.TEXT),
+            TextNode("bold", TextType.BOLD),
+            TextNode(" text", TextType.TEXT),
+        ]
+        assert result == expected
+
+    def test_text_to_textnodes_all_types(self):
+        text = "**bold** _italic_ `code` ![img](url) [link](site)"
+        result = text_to_textnodes(text)
+        expected = [
+            TextNode("bold", TextType.BOLD),
+            TextNode(" ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" ", TextType.TEXT),
+            TextNode("code", TextType.CODE),
+            TextNode(" ", TextType.TEXT),
+            TextNode("img", TextType.IMAGE, "url"),
+            TextNode(" ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "site"),
+        ]
+        assert result == expected
 
 if __name__ == "__main__":
     unittest.main()

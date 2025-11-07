@@ -1,9 +1,6 @@
 import unittest
 from inline_markdown import extract_markdown_images, extract_markdown_links
-from inline_markdown import (
-    split_nodes_delimiter,
-)
-
+from inline_markdown import *
 from textnode import TextNode, TextType
 
 
@@ -164,6 +161,67 @@ class TestInlineMarkdown(unittest.TestCase):
         self.assertEqual(extract_markdown_images(text), [("img", "u")])
         self.assertEqual(extract_markdown_links(text), [])
 
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+    )
+    def test_split_links_none(self):
+        node = TextNode("no links here", TextType.TEXT)
+        out = split_nodes_link([node])
+        assert out == [node]
+
+    def test_split_links_multiple(self):
+        node = TextNode(
+            "a [one](u1) b [two](u2) c",
+            TextType.TEXT,
+        )
+        out = split_nodes_link([node])
+        assert out == [
+            TextNode("a ", TextType.TEXT),
+            TextNode("one", TextType.LINK, "u1"),
+            TextNode(" b ", TextType.TEXT),
+            TextNode("two", TextType.LINK, "u2"),
+            TextNode(" c", TextType.TEXT),
+        ]
+
+    def test_split_images_none(self):
+        node = TextNode("plain text only", TextType.TEXT)
+        out = split_nodes_image([node])
+        assert out == [node]
+
+    def test_split_images_multiple(self):
+        node = TextNode(
+            "pre ![alt1](u1) mid ![alt2](u2) post",
+            TextType.TEXT,
+        )
+        out = split_nodes_image([node])
+        assert out == [
+            TextNode("pre ", TextType.TEXT),
+            TextNode("alt1", TextType.IMAGE, "u1"),
+            TextNode(" mid ", TextType.TEXT),
+            TextNode("alt2", TextType.IMAGE, "u2"),
+            TextNode(" post", TextType.TEXT),
+        ]
+
+    def test_passthrough_non_text(self):
+        img_node = TextNode("alt", TextType.IMAGE, "u")
+        out_links = split_nodes_link([img_node])
+        out_images = split_nodes_image([img_node])
+        assert out_links == [img_node]
+        assert out_images == [img_node]
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,10 +1,10 @@
 from textnode import TextNode, TextType
+from copystatic import copystatic
 
 from textnode import text_node_to_html_node
 
 def main():
-    node = TextNode("Boot.dev", TextType.LINK, "https://www.boot.dev")
-    print(node)
+    copystatic("static", "public")
 
 if __name__ == "__main__":
     main()

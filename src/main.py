@@ -1,14 +1,17 @@
 import os
 import shutil
+import sys
 from copystatic import copystatic
 from gencontent import generate_page
 
-dir_path_public = "public"
+dir_path_public = "docs"
 dir_path_static = "static"
 dir_path_content = "content"
 template_path = "template.html"
 
-def generate_pages_recursive(content_root, template_path, public_root):
+basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+
+def generate_pages_recursive(content_root, template_path, public_root, basepath):
     for root, _, files in os.walk(content_root):
         for name in files:
             if not name.endswith(".md"):
@@ -26,7 +29,7 @@ def generate_pages_recursive(content_root, template_path, public_root):
                 dest_path = os.path.join(public_root, *parts, "index.html")
 
             os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-            generate_page(from_path, template_path, dest_path)
+            generate_page(from_path, template_path, dest_path, basepath)
 
 def main():
     print("Deleting public directory...")
@@ -37,7 +40,7 @@ def main():
     copystatic(dir_path_static, dir_path_public)
 
     print("Generating pages...")
-    generate_pages_recursive(dir_path_content, template_path, dir_path_public)
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public, basepath)
 
 if __name__ == "__main__":
     main()

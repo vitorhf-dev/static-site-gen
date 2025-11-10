@@ -1,3 +1,5 @@
+
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -46,5 +48,7 @@ class ParentNode(HTMLNode):
             raise ValueError("ParentNode must have children")
         inner = "".join(child.to_html() for child in self.children)
         return f"<{self.tag}{self.props_to_html()}>{inner}</{self.tag}>"
+    
+
         
 

@@ -6,7 +6,10 @@ def copystatic(src, dst):
         shutil.rmtree(dst)
     os.mkdir(dst)
     
+    
     for filename in os.listdir(src):
+        if filename.endswith(".Zone.Identifier") or ":" in filename:
+            continue
         src_path = os.path.join(src, filename)
         dst_path = os.path.join(dst, filename)
         if os.path.isfile(src_path):
